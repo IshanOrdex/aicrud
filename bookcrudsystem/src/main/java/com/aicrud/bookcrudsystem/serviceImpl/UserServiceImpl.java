@@ -15,6 +15,7 @@ import com.aicrud.bookcrudsystem.dto.UserLoginDTO;
 import com.aicrud.bookcrudsystem.dto.UserRegistrationDTO;
 import com.aicrud.bookcrudsystem.entity.Users;
 import com.aicrud.bookcrudsystem.exception.CustomException;
+import com.aicrud.bookcrudsystem.exception.EmailValidationException;
 import com.aicrud.bookcrudsystem.service.UserService;
 import com.aicrud.bookcrudsystem.util.JwtUtil;
 
@@ -35,47 +36,55 @@ public class UserServiceImpl implements UserService{
 	private JwtUtil jwtUtil;
 	
 	@Override
-	public void registerUser(@Valid UserRegistrationDTO userRegistrationDTO) {
+	public void registerUser(@Valid UserRegistrationDTO userRegistrationDTO) throws EmailValidationException {
 
 		LOGGER.info("In UserServiceImpl -> registerUser Method");
 
-		String encryptedPassword = passwordEncoder.encode(userRegistrationDTO.getPassword());
+		Users users = userDAO.findByEmail(userRegistrationDTO.getEmail());
 
-		String libraryID = "LIB" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+		if(users != null) {
+			
+			throw new EmailValidationException("Email already used! Please try with different one");
+		}
 
-		Users user = new Users();
+			String encryptedPassword = passwordEncoder.encode(userRegistrationDTO.getPassword());
 
-		BeanUtils.copyProperties(userRegistrationDTO, user);
+			String libraryID = "LIB" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
 
-		user.setPassword(encryptedPassword);
+			Users user = new Users();
 
-		user.setLibraryID(libraryID);
+			BeanUtils.copyProperties(userRegistrationDTO, user);
 
-		user.setCreatedAt(new Date());
+			user.setPassword(encryptedPassword);
 
-		user.setCreatedBy("Admin");
+			user.setLibraryID(libraryID);
 
-		userDAO.save(user);
+			user.setCreatedAt(new Date());
+
+			user.setCreatedBy("Admin");
+
+			userDAO.save(user);
+		
 
 		LOGGER.info("Exiting UserServiceImpl -> registerUser Method");
 	}
 
 	@Override
 	public String userLogin(@Valid UserLoginDTO userLoginDTO) throws CustomException {
-		
+
 		LOGGER.info("In UserServiceImpl -> loginUser Method");
-		
+
 		Users user = userDAO.findByEmail(userLoginDTO.getEmail());
-		
-		if (!passwordEncoder.matches(userLoginDTO.getPassword(), user.getPassword())) {
-			
+
+		if (user == null || !passwordEncoder.matches(userLoginDTO.getPassword(), user.getPassword())) {
+
 			throw new CustomException("Invalid email or password");
 		}
-		
+
 		LOGGER.info("Exiting UserServiceImpl -> loginUser Method");
-		
+
 		return jwtUtil.generateToken(user.getEmail());
-		
+
 	}
 
 }

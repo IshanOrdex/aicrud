@@ -26,125 +26,121 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/rest/book")
 public class BookController {
-	
+
 	@Autowired
 	private BookService bookService;
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(BookController.class);
-	
+
 	@PostMapping("/")
 	public ResponseDTO book(@Valid @RequestBody BookDTO bookDTO) {
-		
+
 		ResponseDTO responseDTO = new ResponseDTO();
-		
+
 		try {
-			
+
 			LOGGER.info("In BookController -> add book API");
-			
+
 			bookService.addBook(bookDTO);
-			
+
 			responseDTO.setServiceResult("Book details saved successfully");
 			responseDTO.setMessage("Book details saved successfully");
 			responseDTO.setSuccess(1);
-			
+
 			LOGGER.info("Exiting BookController -> add book API");
-		
-		}
-		catch (Exception ex) {
-			
+
+		} catch (Exception ex) {
+
 			responseDTO.setServiceResult("Error occurred while saving book details");
 			responseDTO.setMessage("Error occurred while saving book details");
 			responseDTO.setSuccess(0);
 			ex.printStackTrace();
 		}
-		
+
 		return responseDTO;
 	}
 
 	@PutMapping("/update")
 	public ResponseDTO updateBook(@Valid @RequestBody BookDTO bookDTO) {
-		
+
 		ResponseDTO responseDTO = new ResponseDTO();
-		
+
 		try {
-			
+
 			LOGGER.info("In BookController -> Update book API");
-			
+
 			bookService.updateBook(bookDTO);
-			
+
 			responseDTO.setServiceResult("Book details updated successfully");
 			responseDTO.setMessage("Book details updated successfully");
 			responseDTO.setSuccess(1);
-			
+
 			LOGGER.info("Exiting BookController -> Update book API");
-		
-		}
-		catch (Exception ex) {
-			
+
+		} catch (Exception ex) {
+
 			responseDTO.setServiceResult("Error occurred while updating book details");
 			responseDTO.setMessage("Error occurred while updating book details");
 			responseDTO.setSuccess(0);
 		}
-		
+
 		return responseDTO;
 	}
 
 	@DeleteMapping("/delete")
 	public ResponseDTO deleteBook(@RequestParam("bookID") Integer bookID) {
-		
+
 		ResponseDTO responseDTO = new ResponseDTO();
-		
+
 		try {
-			
+
 			LOGGER.info("In BookController -> delete book API");
-			
+
 			bookService.deleteBook(bookID);
-			
+
 			responseDTO.setServiceResult("Book details deleted successfully");
 			responseDTO.setMessage("Book details deleted successfully");
 			responseDTO.setSuccess(1);
-			
+
 			LOGGER.info("Exiting BookController -> delete book API");
-		
-		}
-		catch (Exception ex) {
-			
+
+		} catch (Exception ex) {
+
 			responseDTO.setServiceResult("Error occurred while deleting book details");
 			responseDTO.setMessage("Error occurred while deleting book details");
 			responseDTO.setSuccess(0);
 		}
-		
+
 		return responseDTO;
 	}
 
 	@GetMapping("/books")
 	public ResponseDTO getBook() {
-		
+
 		ResponseDTO responseDTO = new ResponseDTO();
-		
+
 		try {
-			
+
 			LOGGER.info("In BookController -> get book API");
-			
+
 			List<BookDTO> bookDTOs = bookService.getBook();
-			
+
 			responseDTO.setServiceResult(bookDTOs);
 			responseDTO.setMessage("Book details fetched successfully");
 			responseDTO.setSuccess(1);
-			
+
 			LOGGER.info("Exiting BookController -> get book API");
-		
-		}
-		catch (Exception ex) {
-			
+
+		} catch (Exception ex) {
+
 			responseDTO.setServiceResult("Error occurred while fetching book details");
 			responseDTO.setMessage("Error occurred while fetching book details");
 			responseDTO.setSuccess(0);
 		}
-		
+
 		return responseDTO;
 	}
-	
+
 	@PostMapping("/borrow")
 	public ResponseDTO borrowBook(@RequestParam("bookID") Integer bookID, @RequestParam("userID") Integer userID) {
 
@@ -181,9 +177,10 @@ public class BookController {
 
 		return responseDTO;
 	}
-	
+
 	@PostMapping("/return")
-	public ResponseDTO returnBook(@RequestParam("bookID") Integer bookID, @RequestParam("userID") Integer userID,@RequestParam("returnDate") LocalDate returnDate) {
+	public ResponseDTO returnBook(@RequestParam("bookID") Integer bookID, @RequestParam("userID") Integer userID,
+			@RequestParam("returnDate") LocalDate returnDate) {
 
 		ResponseDTO responseDTO = new ResponseDTO();
 
@@ -208,7 +205,5 @@ public class BookController {
 
 		return responseDTO;
 	}
-
-
 
 }
