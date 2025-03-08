@@ -21,7 +21,7 @@ import jakarta.validation.Valid;
 public class UserController {
 
 	@Autowired
-	UserService userService;
+	private UserService userService;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 	
@@ -84,6 +84,7 @@ public class UserController {
 			responseDTO.setServiceResult("Error occurred while login");
 			responseDTO.setMessage("Error occurred while login");
 			responseDTO.setSuccess(0);
+			ex.printStackTrace();
 		}
 
 		return responseDTO;

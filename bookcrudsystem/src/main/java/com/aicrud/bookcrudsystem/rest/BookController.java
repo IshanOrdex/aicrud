@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 public class BookController {
 	
 	@Autowired
-	BookService bookService;
+	private BookService bookService;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(BookController.class);
 	
@@ -55,6 +55,7 @@ public class BookController {
 			responseDTO.setServiceResult("Error occurred while saving book details");
 			responseDTO.setMessage("Error occurred while saving book details");
 			responseDTO.setSuccess(0);
+			ex.printStackTrace();
 		}
 		
 		return responseDTO;
@@ -89,7 +90,7 @@ public class BookController {
 	}
 
 	@DeleteMapping("/delete")
-	public ResponseDTO deleteBook(@Valid @RequestParam Integer bookID) {
+	public ResponseDTO deleteBook(@RequestParam("bookID") Integer bookID) {
 		
 		ResponseDTO responseDTO = new ResponseDTO();
 		
@@ -145,7 +146,7 @@ public class BookController {
 	}
 	
 	@PostMapping("/borrow")
-	public ResponseDTO borrowBook(@RequestParam Integer bookID, @RequestParam Integer userID) {
+	public ResponseDTO borrowBook(@RequestParam("bookID") Integer bookID, @RequestParam("userID") Integer userID) {
 
 		ResponseDTO responseDTO = new ResponseDTO();
 
@@ -182,7 +183,7 @@ public class BookController {
 	}
 	
 	@PostMapping("/return")
-	public ResponseDTO returnBook(@RequestParam Integer bookID, @RequestParam Integer userID,@RequestParam LocalDate returnDate) {
+	public ResponseDTO returnBook(@RequestParam("bookID") Integer bookID, @RequestParam("userID") Integer userID,@RequestParam("returnDate") LocalDate returnDate) {
 
 		ResponseDTO responseDTO = new ResponseDTO();
 

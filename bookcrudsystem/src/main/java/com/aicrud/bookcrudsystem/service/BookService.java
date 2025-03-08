@@ -15,7 +15,7 @@ public interface BookService {
 
 	void updateBook(@Valid BookDTO bookDTO);
 
-	void deleteBook(@Valid Integer bookID);
+	void deleteBook(Integer bookID);
 
 	List<BookDTO> getBook();
 

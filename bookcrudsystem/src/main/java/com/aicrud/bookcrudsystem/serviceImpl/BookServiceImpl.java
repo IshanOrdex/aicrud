@@ -77,7 +77,7 @@ public class BookServiceImpl implements BookService {
 	}
 
 	@Override
-	public void deleteBook(@Valid Integer bookID) {
+	public void deleteBook(Integer bookID) {
 
 		LOGGER.info("In BookserviceImpl -> deleteBook Method");
 
