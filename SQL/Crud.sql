@@ -1,3 +1,16 @@
+
+CREATE TABLE `aicrud`.`role` (
+   `RoleID` INT AUTO_INCREMENT PRIMARY KEY,
+   `RoleType` VARCHAR(100) NOT NULL,
+   `CreatedBy` VARCHAR(100),
+   `CreatedAt` DATE
+);
+
+-- inserting bydefault role type Admin and User
+INSERT INTO ROLE (RoleType, CreatedBy, CreatedAt) 
+VALUES 
+('Admin', 'System', CURDATE()),
+('User', 'System', CURDATE());
   
   CREATE TABLE `aicrud`.`book` (
   `BookID` INT(11) NOT NULL AUTO_INCREMENT,
@@ -11,15 +24,15 @@
   `ModifiedAt` DATE NULL DEFAULT NULL,
   PRIMARY KEY (`BookID`));
   
-  
-  
-  CREATE TABLE `aicrud`.`users` (
+ 
+ CREATE TABLE `users` (
   `UserID` INT NOT NULL AUTO_INCREMENT,
   `Name` VARCHAR(100) NULL DEFAULT NULL,
   `LibraryID` VARCHAR(100) NOT NULL,
   `Email` VARCHAR(100) NOT NULL,
   `Password` VARCHAR(100) NOT NULL,
-  `ContactNo` VARCHAR(45) NULL DEFAULT NULL
+  `ContactNo` VARCHAR(45) NULL DEFAULT NULL,
+  `RoleID` INT NOT NULL,
   `Active` TINYINT(1) NULL DEFAULT 0,
   `CreatedBy` VARCHAR(45) NULL DEFAULT NULL,
   `CreatedAt` DATE NULL DEFAULT NULL,
@@ -27,8 +40,14 @@
   `ModifiedAt` DATE NULL DEFAULT NULL,
   PRIMARY KEY (`UserID`),
   UNIQUE INDEX `LibraryID_UNIQUE` (`LibraryID` ASC) VISIBLE,
-  UNIQUE INDEX `Email_UNIQUE` (`Email` ASC) VISIBLE);
-  
+  UNIQUE INDEX `Email_UNIQUE` (`Email` ASC) VISIBLE,
+  INDEX `FK_RoleID` (`RoleID` ASC),
+  CONSTRAINT `FK_RoleID`
+    FOREIGN KEY (`RoleID`)
+    REFERENCES `aicrud`.`role` (`RoleID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);
   
 
 CREATE TABLE `aicrud`.`borrowbook` (

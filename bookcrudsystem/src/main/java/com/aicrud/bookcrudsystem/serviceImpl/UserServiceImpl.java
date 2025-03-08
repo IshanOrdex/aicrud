@@ -1,6 +1,7 @@
 package com.aicrud.bookcrudsystem.serviceImpl;
 
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -10,9 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.aicrud.bookcrudsystem.dao.RoleDAO;
 import com.aicrud.bookcrudsystem.dao.UserDAO;
 import com.aicrud.bookcrudsystem.dto.UserLoginDTO;
 import com.aicrud.bookcrudsystem.dto.UserRegistrationDTO;
+import com.aicrud.bookcrudsystem.entity.Role;
 import com.aicrud.bookcrudsystem.entity.Users;
 import com.aicrud.bookcrudsystem.exception.CustomException;
 import com.aicrud.bookcrudsystem.service.UserService;
@@ -27,6 +30,9 @@ public class UserServiceImpl implements UserService{
 	
 	@Autowired
 	private UserDAO userDAO;
+	
+	@Autowired
+	private RoleDAO roleDAO;
 	
 	@Autowired
     private BCryptPasswordEncoder passwordEncoder;
@@ -54,7 +60,15 @@ public class UserServiceImpl implements UserService{
 		user.setCreatedAt(new Date());
 
 		user.setCreatedBy("Admin");
+		
+		Optional<Role> role = null;
+		
+		if(null != userRegistrationDTO.getRoleID())
+			role = roleDAO.findById(userRegistrationDTO.getRoleID());
 
+		if(null != role.get())
+			user.setRole(role.get());
+			
 		userDAO.save(user);
 
 		LOGGER.info("Exiting UserServiceImpl -> registerUser Method");
