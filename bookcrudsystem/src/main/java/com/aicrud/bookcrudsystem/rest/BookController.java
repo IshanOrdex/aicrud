@@ -32,7 +32,7 @@ public class BookController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BookController.class);
 
-	@PostMapping("/")
+	@PostMapping("/admin/")
 	public ResponseDTO book(@Valid @RequestBody BookDTO bookDTO) {
 
 		ResponseDTO responseDTO = new ResponseDTO();
@@ -60,7 +60,7 @@ public class BookController {
 		return responseDTO;
 	}
 
-	@PutMapping("/update")
+	@PutMapping("/admin/update")
 	public ResponseDTO updateBook(@Valid @RequestBody BookDTO bookDTO) {
 
 		ResponseDTO responseDTO = new ResponseDTO();
@@ -87,7 +87,7 @@ public class BookController {
 		return responseDTO;
 	}
 
-	@DeleteMapping("/delete")
+	@DeleteMapping("/admin/delete")
 	public ResponseDTO deleteBook(@RequestParam("bookID") Integer bookID) {
 
 		ResponseDTO responseDTO = new ResponseDTO();
@@ -114,7 +114,7 @@ public class BookController {
 		return responseDTO;
 	}
 
-	@GetMapping("/books")
+	@GetMapping("/user/books")
 	public ResponseDTO getBook() {
 
 		ResponseDTO responseDTO = new ResponseDTO();
@@ -141,7 +141,7 @@ public class BookController {
 		return responseDTO;
 	}
 
-	@PostMapping("/borrow")
+	@PostMapping("/user/borrow")
 	public ResponseDTO borrowBook(@RequestParam("bookID") Integer bookID, @RequestParam("userID") Integer userID) {
 
 		ResponseDTO responseDTO = new ResponseDTO();
@@ -178,7 +178,7 @@ public class BookController {
 		return responseDTO;
 	}
 
-	@PostMapping("/return")
+	@PostMapping("/user/return")
 	public ResponseDTO returnBook(@RequestParam("bookID") Integer bookID, @RequestParam("userID") Integer userID,
 			@RequestParam("returnDate") LocalDate returnDate) {
 

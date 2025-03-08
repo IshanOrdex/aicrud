@@ -3,6 +3,7 @@ package com.aicrud.bookcrudsystem.util;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,7 +12,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.aicrud.bookcrudsystem.dao.RoleDAO;
 import com.aicrud.bookcrudsystem.dao.UserDAO;
+import com.aicrud.bookcrudsystem.entity.Role;
 import com.aicrud.bookcrudsystem.entity.Users;
 
 import jakarta.servlet.FilterChain;
@@ -28,6 +31,9 @@ public class JwtFilter extends OncePerRequestFilter{
     @Autowired
     private UserDAO userDAO;
     
+    @Autowired
+	private RoleDAO roleDAO;
+    
 	 @Override
 	    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 	            throws ServletException, IOException {
@@ -43,17 +49,19 @@ public class JwtFilter extends OncePerRequestFilter{
 
 	        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 	            Users user = userDAO.findByEmail(email);
+	            
+	           Optional<Role> role = roleDAO.findById(user.getRole().getRoleID());
 
-	            if (user != null && jwtUtil.validateToken(token, user.getEmail())) {
-	                UsernamePasswordAuthenticationToken authToken =
-	                        new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
-	                SecurityContextHolder.getContext().setAuthentication(authToken);
-	            }
+//	            if (user != null && jwtUtil.validateToken(token, user.getEmail())) {
+//	                UsernamePasswordAuthenticationToken authToken =
+//	                        new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+//	                SecurityContextHolder.getContext().setAuthentication(authToken);
+//	            }
 	            
 	            if (user != null && jwtUtil.validateToken(token, user.getEmail())) {
 	                UsernamePasswordAuthenticationToken authToken =
 	                        new UsernamePasswordAuthenticationToken(user, null,
-	                                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().getRoleType().toUpperCase())));
+	                                List.of(new SimpleGrantedAuthority("ROLE_" + role.get().getRoleType().toUpperCase())));
 	                SecurityContextHolder.getContext().setAuthentication(authToken);
 	            }
 	        }
