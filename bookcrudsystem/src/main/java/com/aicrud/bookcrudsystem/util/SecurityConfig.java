@@ -22,7 +22,9 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) 
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/rest/user/register", "/rest/user/login").permitAll() 
+                .requestMatchers("/rest/user/register", "/rest/user/login").permitAll()
+                .requestMatchers("/rest/book/admin/**").hasRole("ADMIN")
+                .requestMatchers("/rest/book/user/**").hasRole("USER")
                 .anyRequest().authenticated() 
             )
             .sessionManagement(session -> session

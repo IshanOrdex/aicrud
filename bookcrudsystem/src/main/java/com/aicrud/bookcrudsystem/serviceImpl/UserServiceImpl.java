@@ -1,6 +1,7 @@
 package com.aicrud.bookcrudsystem.serviceImpl;
 
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -10,9 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.aicrud.bookcrudsystem.dao.RoleDAO;
 import com.aicrud.bookcrudsystem.dao.UserDAO;
 import com.aicrud.bookcrudsystem.dto.UserLoginDTO;
 import com.aicrud.bookcrudsystem.dto.UserRegistrationDTO;
+import com.aicrud.bookcrudsystem.entity.Role;
 import com.aicrud.bookcrudsystem.entity.Users;
 import com.aicrud.bookcrudsystem.exception.CustomException;
 import com.aicrud.bookcrudsystem.exception.EmailValidationException;
@@ -30,6 +33,9 @@ public class UserServiceImpl implements UserService{
 	private UserDAO userDAO;
 	
 	@Autowired
+	private RoleDAO roleDAO;
+	
+	@Autowired
     private BCryptPasswordEncoder passwordEncoder;
 	
 	@Autowired
@@ -42,29 +48,35 @@ public class UserServiceImpl implements UserService{
 
 		Users users = userDAO.findByEmail(userRegistrationDTO.getEmail());
 
-		if(users != null) {
-			
+		if (users != null) {
+
 			throw new EmailValidationException("Email already used! Please try with different one");
 		}
 
-			String encryptedPassword = passwordEncoder.encode(userRegistrationDTO.getPassword());
+		String encryptedPassword = passwordEncoder.encode(userRegistrationDTO.getPassword());
 
-			String libraryID = "LIB" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+		String libraryID = "LIB" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
 
-			Users user = new Users();
+		Users user = new Users();
 
-			BeanUtils.copyProperties(userRegistrationDTO, user);
+		BeanUtils.copyProperties(userRegistrationDTO, user);
 
-			user.setPassword(encryptedPassword);
+		user.setPassword(encryptedPassword);
 
-			user.setLibraryID(libraryID);
+		user.setLibraryID(libraryID);
 
-			user.setCreatedAt(new Date());
+		Optional<Role> role = null;
 
-			user.setCreatedBy("Admin");
+		if (null != userRegistrationDTO.getRoleID())
+			role = roleDAO.findById(userRegistrationDTO.getRoleID());
 
-			userDAO.save(user);
-		
+		if (null != role.get())
+			user.setRole(role.get());
+
+		user.setCreatedAt(new Date());
+		user.setCreatedBy("Admin");
+
+		userDAO.save(user);
 
 		LOGGER.info("Exiting UserServiceImpl -> registerUser Method");
 	}
